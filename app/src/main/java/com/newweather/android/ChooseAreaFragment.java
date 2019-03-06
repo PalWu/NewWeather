@@ -137,7 +137,7 @@ public class ChooseAreaFragment extends Fragment {
     private void queryCities(){
         titleText.setText(selectedProvince.getProvinceName());
         backButton.setVisibility(View.VISIBLE);
-        cityList = LitePal.where("provinceid =?",String.valueOf(selectedProvince
+        cityList = LitePal.where("provinceid = ?",String.valueOf(selectedProvince
         .getId())).find(City.class);
         if(cityList.size()>0){
             dataList.clear();
@@ -150,7 +150,7 @@ public class ChooseAreaFragment extends Fragment {
             currentLevel = LEVEL_CITY;
         }else {
             int provinceCode = selectedProvince.getProvinceCode();
-            String address = "http://guolin.tech/api/china/"+ provinceCode;
+            String address = "http://guolin.tech/api/china/" + provinceCode;
             queryFromServer(address,"city");
         }
     }
@@ -175,7 +175,7 @@ public class ChooseAreaFragment extends Fragment {
         }else {
             int provinceCode = selectedProvince.getProvinceCode();
             int cityCode = selectedCity.getCityCode();
-            String address = "http://guolin.tech/api/china/"+provinceCode+"/"+cityCode;
+            String address = "http://guolin.tech/api/china/" + provinceCode + "/" + cityCode;
             queryFromServer(address,"county");
         }
     }
@@ -189,17 +189,6 @@ public class ChooseAreaFragment extends Fragment {
         showProgressDialog();
         //调用HttpUtil的sendOkHttpRequest()方法向服务器发送请求
         HttpUtil.sendOkHttpRequest(address, new Callback() {
-            @Override
-            public void onFailure(okhttp3.Call call, IOException e) {
-                //通过runOnUiThread()方法回到主线程处理逻辑
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        closeProgressDialog();
-                        Toast.makeText(getContext(),"加载失败",Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
         //服务器相应的数据会返回到onResponse()方法当中
             @Override
             public void onResponse(okhttp3.Call call, Response response) throws IOException {
@@ -229,18 +218,17 @@ public class ChooseAreaFragment extends Fragment {
                     });
                 }
             }
-
-//            public void onFailure(Call call, IOException e){
-//                //通过 runOnUiThread()方法回到主线程处理逻辑
-////                getActivity().runOnUiThread(new Runnable() {
-////                    @Override
-////                    public void run() {
-////                        closeProgressDialog();
-////                        Toast.makeText(getContext(),"加载失败",Toast.LENGTH_SHORT).show();
-////                    }
-////                });
-//            }
-
+            @Override
+            public void onFailure(okhttp3.Call call, IOException e) {
+                //通过runOnUiThread()方法回到主线程处理逻辑
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        closeProgressDialog();
+                        Toast.makeText(getContext(),"加载失败",Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         });
     }
 //    @Override
